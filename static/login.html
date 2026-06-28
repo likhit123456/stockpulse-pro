@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockPulse Pro — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:       #0f0d07;
+  --bg1:      #141108;
+  --bg2:      #1a1508;
+  --bg3:      #211c0a;
+  --border:   #2a2210;
+  --border2:  #3a3018;
+  --text:     #e8dcc8;
+  --muted:    #8a7a5a;
+  --dim:      #4a3e28;
+  --amber:    #f5a623;
+  --amber2:   #e8901a;
+  --amber-glow: rgba(245,166,35,0.12);
+  --amber-dim:  rgba(245,166,35,0.06);
+  --green:    #3ddc84;
+  --green-dim:rgba(61,220,132,0.10);
+  --red:      #ff5f57;
+  --red-dim:  rgba(255,95,87,0.10);
+  --crt:      rgba(0,0,0,0.03);
+}
+
+body{
+  font-family:'JetBrains Mono',monospace;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  /* Subtle grid noise */
+  background-image:
+    linear-gradient(rgba(245,166,35,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,166,35,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* CRT scanlines overlay */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events:none;
+  z-index:1000;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scanline{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:0.96}94%{opacity:1}98%{opacity:0.98}}
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 20px rgba(245,166,35,0.15)}50%{box-shadow:0 0 40px rgba(245,166,35,0.25)}}
+
+.wrap{
+  width:100%;max-width:400px;
+  animation:fadeUp .5s ease both;
+}
+
+/* Header ticker — top marquee */
+.top-ticker{
+  font-size:9px;letter-spacing:.08em;
+  color:var(--muted);border:1px solid var(--border2);
+  border-bottom:none;
+  padding:5px 12px;
+  display:flex;gap:20px;overflow:hidden;
+  background:var(--bg1);
+}
+.t-up{color:var(--green)}.t-dn{color:var(--red)}.t-sym{color:var(--text);font-weight:600}
+
+.card{
+  background:var(--bg1);
+  border:1px solid var(--border2);
+  position:relative;overflow:hidden;
+  animation:glow-pulse 4s ease-in-out infinite;
+}
+
+/* Animated amber scan line */
+.card::after{
+  content:'';position:absolute;
+  inset-x:0;top:-2px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--amber),transparent);
+  animation:scanline 4s linear infinite;
+  opacity:.8;
+}
+
+.card-head{
+  padding:28px 28px 22px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+  text-align:center;
+  position:relative;
+}
+
+/* Corner decoration */
+.card-head::before,.card-head::after{
+  content:'';position:absolute;
+  width:12px;height:12px;
+}
+.card-head::before{top:10px;left:10px;border-top:1px solid var(--amber);border-left:1px solid var(--amber);}
+.card-head::after {top:10px;right:10px;border-top:1px solid var(--amber);border-right:1px solid var(--amber);}
+
+.logo-area{margin-bottom:18px;}
+
+.logo-mark{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;margin:0 auto 12px;
+  border:1px solid var(--amber);
+  position:relative;
+  background:var(--bg3);
+}
+.logo-mark::before,.logo-mark::after{
+  content:'';position:absolute;
+  background:var(--amber);
+}
+.logo-mark::before{width:1px;height:100%;left:50%;opacity:.2;}
+.logo-mark::after{width:100%;height:1px;top:50%;opacity:.2;}
+.logo-mark svg{position:relative;z-index:1;}
+
+.logo-name{
+  font-family:'Press Start 2P',monospace;
+  font-size:13px;letter-spacing:.04em;
+  color:var(--amber);line-height:1.5;
+  text-shadow:
+    2px 2px 0 #7a4800,
+    4px 4px 0 #3d2400,
+    6px 6px 0 rgba(0,0,0,.5);
+  animation:flicker 8s ease-in-out infinite;
+}
+.logo-sub{
+  font-family:'Press Start 2P',monospace;
+  font-size:5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--amber);margin-top:8px;
+  text-shadow:1px 1px 0 #7a4800,2px 2px 0 #3d2400;
+  opacity:.85;
+}
+
+.live-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:7px;font-size:9px;color:var(--muted);letter-spacing:.08em;
+  margin-bottom:16px;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 6px var(--green);
+  animation:pulse 2s ease-in-out infinite;
+}
+
+/* Tab row */
+.tab-row{
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1px solid var(--border2);
+}
+.tab{
+  padding:9px;font-size:9px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;
+  background:transparent;border:none;
+  color:var(--muted);cursor:pointer;
+  font-family:'JetBrains Mono',monospace;
+  transition:all .2s;position:relative;
+}
+.tab.active{
+  background:var(--amber);color:var(--bg);
+  text-shadow:none;
+}
+.tab:first-child{border-right:1px solid var(--border2);}
+.tab:not(.active):hover{color:var(--amber);background:var(--amber-dim);}
+
+.card-body{padding:26px 28px;}
+
+.field{margin-bottom:18px;}
+.field-label{
+  display:block;font-size:8px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px;
+}
+.field-input{
+  width:100%;height:44px;padding:0 14px;
+  background:var(--bg);
+  border:1px solid var(--border2);outline:none;
+  font-size:13px;color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  transition:all .2s;
+  caret-color:var(--amber);
+}
+.field-input:focus{
+  border-color:var(--amber);
+  box-shadow:0 0 0 3px var(--amber-dim),inset 0 0 0 1px rgba(245,166,35,.1);
+}
+.field-input::placeholder{color:var(--dim);font-size:11px;}
+
+.submit-btn{
+  width:100%;height:48px;
+  background:transparent;
+  border:1px solid var(--amber);
+  color:var(--amber);font-size:10px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;transition:all .2s;
+  font-family:'JetBrains Mono',monospace;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-top:22px;position:relative;overflow:hidden;
+}
+.submit-btn::before{
+  content:'';position:absolute;inset:0;
+  background:var(--amber);
+  transform:translateX(-101%);
+  transition:transform .25s ease;
+}
+.submit-btn:hover::before{transform:translateX(0);}
+.submit-btn:hover{color:var(--bg);}
+.submit-btn>*{position:relative;z-index:1;}
+.submit-btn:disabled{
+  border-color:var(--border2);color:var(--dim);cursor:not-allowed;
+}
+.submit-btn:disabled::before{display:none;}
+
+.spinner{
+  width:14px;height:14px;
+  border:1.5px solid currentColor;
+  border-top-color:transparent;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:none;
+}
+
+.msg{
+  padding:9px 13px;font-size:10px;
+  margin-top:13px;display:none;
+  letter-spacing:.04em;
+}
+.msg.error{
+  background:var(--red-dim);
+  border:1px solid var(--red);color:var(--red);
+}
+.msg.success{
+  background:var(--green-dim);
+  border:1px solid var(--green);color:var(--green);
+}
+.msg.visible{display:block;}
+
+.card-foot{
+  border-top:1px solid var(--border);
+  padding:11px 28px;
+  text-align:center;
+  font-size:8px;color:var(--dim);
+  letter-spacing:.08em;line-height:1.7;
+  background:var(--bg);
+}
+.card-foot span{color:var(--amber);}
+
+/* Corner brackets on card footer */
+.corner-br{
+  position:absolute;bottom:10px;right:10px;
+  width:12px;height:12px;
+  border-bottom:1px solid var(--amber);
+  border-right:1px solid var(--amber);
+}
+.corner-bl{
+  position:absolute;bottom:10px;left:10px;
+  width:12px;height:12px;
+  border-bottom:1px solid var(--amber);
+  border-left:1px solid var(--amber);
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- Mini ticker header — populated live by JS below -->
+  <div class="top-ticker" id="top-ticker">
+    <span><span class="t-sym">AAPL</span> <span class="t-price">—</span> <span class="t-chg">…</span></span>
+    <span><span class="t-sym">NVDA</span> <span class="t-price">—</span> <span class="t-chg">…</span></span>
+    <span><span class="t-sym">TSLA</span> <span class="t-price">—</span> <span class="t-chg">…</span></span>
+    <span><span class="t-sym">MSFT</span> <span class="t-price">—</span> <span class="t-chg">…</span></span>
+    <span><span class="t-sym">META</span> <span class="t-price">—</span> <span class="t-chg">…</span></span>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="logo-area">
+        <div class="logo-mark">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M2 16L6 9L9 12L12 6L17 4" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="logo-name">StockPulse</div>
+        <div class="logo-sub">Pro Terminal</div>
+      </div>
+      <div class="live-row">
+        <div class="live-dot"></div>
+        NYSE · NSE · NASDAQ active
+      </div>
+      <div class="tab-row">
+        <button class="tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        <button class="tab" id="tab-register" onclick="switchTab('register')">Register</button>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- LOGIN -->
+      <div id="form-login">
+        <div class="field">
+          <label class="field-label">Email Address</label>
+          <input class="field-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Password</label>
+          <input class="field-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+        <button class="submit-btn" id="login-btn" onclick="doLogin()">
+          <div class="spinner" id="login-spinner"></div>
+          <span id="login-btn-text">Access Terminal →</span>
+        </button>
+        <div class="msg" id="login-msg"></div>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="form-register" style="display:none">
+        <div class="field">
+          <label class="field-label">Full Name</label>
+          <input class="field-input" id="reg-name" type="text" placeholder="Your name" autocomplete="name"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Email Address</label>
+          <input class="field-input" id="reg-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Password <span style="color:var(--dim)">(min 6 chars)</span></label>
+          <input class="field-input" id="reg-password" type="password" placeholder="••••••••" autocomplete="new-password"/>
+        </div>
+        <button class="submit-btn" id="reg-btn" onclick="doRegister()">
+          <div class="spinner" id="reg-spinner"></div>
+          <span id="reg-btn-text">Create Account →</span>
+        </button>
+        <div class="msg" id="reg-msg"></div>
+      </div>
+    </div>
+
+    <div class="card-foot" style="position:relative;">
+      <span>StockPulse Pro</span> — AI-powered investment intelligence<br/>
+      Your data is encrypted and never sold.
+      <div class="corner-br"></div>
+      <div class="corner-bl"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',    tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+}
+
+function setLoading(prefix, loading) {
+  const btn = document.getElementById(prefix + '-btn');
+  const spinner = document.getElementById(prefix + '-spinner');
+  const text = document.getElementById(prefix + '-btn-text');
+  btn.disabled = loading;
+  spinner.style.display = loading ? 'block' : 'none';
+  text.textContent = loading ? 'Please wait…' : (prefix === 'login' ? 'Access Terminal →' : 'Create Account →');
+}
+
+function showMsg(prefix, text, type) {
+  const el = document.getElementById(prefix + '-msg');
+  el.textContent = text;
+  el.className = `msg ${type} visible`;
+}
+
+async function doLogin() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) { showMsg('login', 'Please fill in all fields.', 'error'); return; }
+  setLoading('login', true);
+  try {
+    const res  = await fetch('/auth/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) { showMsg('login', data.detail || 'Login failed.', 'error'); return; }
+    localStorage.setItem('sp_token',    data.token);
+    localStorage.setItem('sp_email',    data.email);
+    localStorage.setItem('sp_fullname', data.full_name);
+    showMsg('login', '✓ Login successful. Redirecting…', 'success');
+    setTimeout(() => { window.location.href = '/'; }, 800);
+  } catch(e) {
+    showMsg('login', 'Network error. Is the server running?', 'error');
+  } finally {
+    setLoading('login', false);
+  }
+}
+
+async function doRegister() {
+  const full_name = document.getElementById('reg-name').value.trim();
+  const email     = document.getElementById('reg-email').value.trim();
+  const password  = document.getElementById('reg-password').value;
+  if (!full_name || !email || !password) { showMsg('reg', 'Please fill in all fields.', 'error'); return; }
+  if (password.length < 6) { showMsg('reg', 'Password must be at least 6 characters.', 'error'); return; }
+  setLoading('reg', true);
+  try {
+    const res  = await fetch('/auth/register', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password, full_name }),
+    });
+    const data = await res.json();
+    if (!res.ok) { showMsg('reg', data.detail || 'Registration failed.', 'error'); return; }
+    localStorage.setItem('sp_token',    data.token);
+    localStorage.setItem('sp_email',    data.email);
+    localStorage.setItem('sp_fullname', data.full_name);
+    showMsg('reg', '✓ Account created. Redirecting…', 'success');
+    setTimeout(() => { window.location.href = '/'; }, 800);
+  } catch(e) {
+    showMsg('reg', 'Network error. Is the server running?', 'error');
+  } finally {
+    setLoading('reg', false);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const loginVisible = document.getElementById('form-login').style.display !== 'none';
+  if (loginVisible) doLogin(); else doRegister();
+});
+
+if (localStorage.getItem('sp_token')) window.location.href = '/';
+
+// ── Live ticker bar ──────────────────────────────────────────
+(async function loadTickers() {
+  const tickers = ['AAPL', 'NVDA', 'TSLA', 'MSFT', 'META'];
+  const spans   = document.querySelectorAll('#top-ticker > span');
+
+  // Fetch each ticker from the cached analysis endpoint (fast if already warm)
+  const results = await Promise.allSettled(
+    tickers.map(t =>
+      fetch(`/api/analyze/${t}`, { signal: AbortSignal.timeout(8000) })
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null)
+    )
+  );
+
+  results.forEach((res, i) => {
+    const data = res.status === 'fulfilled' ? res.value : null;
+    if (!data || !spans[i]) return;
+    const price  = data.current_price;
+    const chgPct = data.price_change_pct;
+    if (!price) return;
+
+    const priceEl = spans[i].querySelector('.t-price');
+    const chgEl   = spans[i].querySelector('.t-chg');
+    if (!priceEl || !chgEl) return;
+
+    priceEl.textContent = `$${price.toFixed(2)}`;
+    const sign   = chgPct >= 0 ? '+' : '';
+    chgEl.textContent   = `${sign}${chgPct.toFixed(2)}%`;
+    chgEl.className     = `t-chg ${chgPct >= 0 ? 't-up' : 't-dn'}`;
+  });
+})();
+</script>
+</body>
+</html>
